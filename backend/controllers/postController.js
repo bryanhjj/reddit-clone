@@ -1,6 +1,49 @@
 import { Prisma, PrismaClient } from '@prisma/client';
+import { multer } from 'multer';
 
 const prisma = new PrismaClient();
+
+// multer config
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, '/public/uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now()+file.originalname)
+    }
+});
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype ==='image/jpeg' || file.mimetype ==='image/jpg' || file.mimetype ==='image/png') {
+       cb(null,true);
+    } else {
+       cb(null, false);
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5,
+    },
+    fileFilter: fileFilter,
+});
+// end of multer config
+
+/* template, might need these later
+export const postImgGet = async (req, res) => {
+    res.sendFile(__dirname, '/index.html'); // change this
+};
+
+export const uploadImgPost = async (req, res) => {
+    let filename = req.file.filename;
+    await upload.single('image');
+    res.json({
+        message: 'Image uploaded successfully.',
+        filename: filename,
+    });
+};
+*/
 
 export const allPostGet = async (req, res) => {
     const result = await prisma.post.findMany();
@@ -10,12 +53,12 @@ export const allPostGet = async (req, res) => {
 export const postCreatePost = async (req, res) => {
     const { title } = req.body;
     const { content } = req.body;
-    const { imgURL } = req.body;
+    const img = req.file? req.file.filename : undefined;
     const result = await prisma.post.create({
         data: {
             title,
             content,
-            imgURL
+            img,
         },
     })
     res.json(result);
