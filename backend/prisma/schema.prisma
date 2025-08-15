@@ -22,6 +22,8 @@ model Post {
   content   String?
   imgURL    String?
   comments  Comment[]
+  upvote    Int
+  downvote  Int
 }
 
 model Comment {
@@ -30,4 +32,6 @@ model Comment {
   createdAt   DateTime  @default(now())
   post        Post      @relation(fields: [postId], references: [id])
   postId      Int
+  upvote    Int
+  downvote  Int
 }
