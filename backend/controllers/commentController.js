@@ -65,3 +65,50 @@ export const commentDelete = async (req, res) => {
         },
     });
 };
+
+export const upvotePut = async (req, res) => {
+    const { commentId } = req.params;
+    const targetComment = await prisma.comment.findUnique({
+        where: {
+            id: Number(commentId),
+        },
+    });
+    if (targetComment) {
+        const result = await prisma.comment.update({
+            where: {
+                id: Number(commentId),
+            },
+            data: {
+                upvote: Number(upvote) + 1,
+            },
+        });
+        res.json(result);
+    } else {
+        res.statusMessage = "The requested comment does not exist.";
+        res.status(404).end();
+    }
+};
+
+
+export const downvotePut = async (req, res) => {
+    const { commentId } = req.params;
+    const targetComment = await prisma.comment.findUnique({
+        where: {
+            id: Number(commentId),
+        },
+    });
+    if (targetComment) {
+        const result = await prisma.comment.update({
+            where: {
+                id: Number(commentId),
+            },
+            data: {
+                upvote: Number(upvote) - 1,
+            },
+        });
+        res.json(result);
+    } else {
+        res.statusMessage = "The requested comment does not exist.";
+        res.status(404).end();
+    }
+};
