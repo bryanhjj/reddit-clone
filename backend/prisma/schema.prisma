@@ -20,7 +20,7 @@ model Post {
   updatedAt DateTime  @updatedAt
   title     String    @db.VarChar(255)
   content   String?
-  imgURL    String?
+  imgName    String?
   comments  Comment[]
   upvote    Int
   downvote  Int
